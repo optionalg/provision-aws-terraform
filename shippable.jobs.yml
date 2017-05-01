@@ -27,7 +27,9 @@ jobs:
       - script: echo "FAILURE"
     # save Terraform statefile for use in subsequent jobs
     always:
-      - script: cp $PROVISION_AWS_TERRAFORM_REPO_STATE/terraform.tfstate /build/state 
+      - script: |
+          cd $PROVISION_AWS_TERRAFORM_REPO_STATE
+          cp terraform.tfstate $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
     flags:
       - provision-aws-terraform
 
