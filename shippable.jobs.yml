@@ -29,7 +29,7 @@ jobs:
     always:
       - script: |
           cd $PROVISION_AWS_TERRAFORM_REPO_STATE
-          cp terraform.tfstate $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
+          cp terraform.tfstate /build/state
     flags:
       - provision-aws-terraform
 
@@ -44,10 +44,10 @@ jobs:
         switch: off
       - TASK:
         # restore Terraform statefile
-        - script: ls -al $PROVISION_AWS_TERRAFORM_TERMINATE_EC2_STATE
+        - script: ls -al $PROVISION_AWS_TERRAFORM_PROVISION_EC2_PATH
         - script: |
-            cd $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
-            cp terraform.tfstate $PROVISION_AWS_TERRAFORM_TERMINATE_EC2_STATE
+            cd $PROVISION_AWS_TERRAFORM_PROVISION_EC2_PATH
+            cp terraform.tfstate $PROVISION_AWS_TERRAFORM_REPO_STATE
         # Export AWS env variables for use by Terraform CLI
         - script: >
             export 
