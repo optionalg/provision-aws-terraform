@@ -12,6 +12,12 @@ jobs:
       - IN: provision_aws_terraform_repo
         switch: off
       - TASK:
+        # Restore previous Terraform statefile
+        - script: |
+            cd /build/previousState
+            if [[ -f terraform.tfstate ]]; then 
+              cp terraform.tfstate $PROVISION_AWS_TERRAFORM_REPO_STATE
+            fi
         # Export AWS env variables for use by Terraform CLI
         - script: >
             export 
@@ -43,7 +49,7 @@ jobs:
       - IN: provision_aws_terraform_repo
         switch: off
       - TASK:
-        # restore Terraform statefile
+        # Restore Terraform statefile
         - script: ls -al $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
         - script: |
             cd $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
