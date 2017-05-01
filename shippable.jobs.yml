@@ -49,7 +49,6 @@ jobs:
         switch: off
       - TASK:
         # Restore Terraform statefile
-        - script: ls -al $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
         - script: |
             cd $PROVISION_AWS_TERRAFORM_PROVISION_EC2_STATE
             cp terraform.tfstate $PROVISION_AWS_TERRAFORM_REPO_STATE
