@@ -10,7 +10,6 @@ jobs:
     steps:
       - IN: provision_aws_terraform_cli
       - IN: provision_aws_terraform_repo
-        switch: off
       - TASK:
         # Restore previous Terraform statefile
         - script: |
