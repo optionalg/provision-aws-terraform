@@ -1,0 +1,61 @@
+jobs:
+
+# jobs for the sample node app pipeline from CI thru TEST environment
+
+################################
+
+# Provision Tomcat servers on AWS with Terraform
+  - name: provision_aws_terraform_provision_ec2
+    type: runCLI
+    steps:
+      - IN: provision_aws_terraform_cli
+      - IN: provision_aws_terraform_repo
+        switch: off
+      - TASK:
+        # Export AWS env variables for use by Terraform CLI
+        - script: >
+            export 
+            AWS_ACCESS_KEY_ID=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_ACCESS_KEY_ID 
+            AWS_SECRET_ACCESS_KEY=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_SECRET_ACCESS_KEY
+            AWS_DEFAULT_REGION=$PROVISION_AWS_TERRAFORM_CLI_POINTER_REGION
+        - script: |
+            cd $PROVISION_AWS_TERRAFORM_REPO_STATE
+            terraform apply
+    on_success: 
+      - script: echo "SUCCESS"
+    on_failure:
+      - script: echo "FAILURE"
+    # save Terraform statefile for use in subsequent jobs
+    always:
+      - script: cp $PROVISION_AWS_TERRAFORM_REPO_STATE/terraform.tfstate /build/state 
+    flags:
+      - provision-aws-terraform
+
+# Terminate EC/2 servers on AWS with Terraform
+  - name: provision_aws_terraform_terminate_ec2
+    type: runCLI
+    steps:
+      - IN: provision_aws_terraform_provision_ec2
+        switch: off
+      - IN: provision_aws_terraform_cli
+      - IN: provision_aws_terraform_repo
+        switch: off
+      - TASK:
+        - script: >
+            export 
+            AWS_ACCESS_KEY_ID=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_ACCESS_KEY_ID 
+            AWS_SECRET_ACCESS_KEY=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_SECRET_ACCESS_KEY
+            AWS_DEFAULT_REGION=$PROVISION_AWS_TERRAFORM_CLI_POINTER_REGION
+        - script: |
+            cd $PROVISION_AWS_TERRAFORM_REPO_STATE
+            terraform destroy
+    on_success: 
+      - script: echo "SUCCESS"
+    on_failure:
+      - script: echo "FAILURE"
+    # save Terraform statefile for use in subsequent jobs
+    always:
+      - script: cp $PROVISION_AWS_TERRAFORM_REPO_STATE/terraform.tfstate /build/state 
+    flags:
+      - provision-aws-terraform
+
