@@ -4,7 +4,7 @@ jobs:
 
 ################################
 
-# Provision Tomcat servers on AWS with Terraform
+# Provision instances on AWS with Terraform
   - name: provision_aws_terraform_provision_ec2
     type: runCLI
     steps:

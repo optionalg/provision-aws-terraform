@@ -25,7 +25,7 @@ for this sample in Shippable
 Check these files and update config wherever the comment asks you to replace 
 with your specific values (for example, to replace with your Integration names)
 * Specifications for the instances that will be launched in AWS can be found in 
-group_vars/tomcat-servers.yml. Update these, as appropriate.
+`terraform.tf`. Update these, as appropriate.
 * Add the pipeline to your SPOG view in Shippable:
   * Select your subscription from the dropdown menu in upper left (three 
   horizontal lines)
