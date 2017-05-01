@@ -4,7 +4,7 @@ provider "aws" {}
 
 # EC2 instances
 resource "aws_instance" "sampleInstances" {
-  count = 1
+  count = 2
 
   # ami = "${var.ecsAmi}"
   ami = "ami-80861296"
