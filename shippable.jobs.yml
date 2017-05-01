@@ -48,7 +48,7 @@ jobs:
             AWS_DEFAULT_REGION=$PROVISION_AWS_TERRAFORM_CLI_POINTER_REGION
         - script: |
             cd $PROVISION_AWS_TERRAFORM_REPO_STATE
-            terraform destroy
+            terraform destroy -force
     on_success: 
       - script: echo "SUCCESS"
     on_failure:
