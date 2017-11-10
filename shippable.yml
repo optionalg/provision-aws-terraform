@@ -1,3 +1,28 @@
+resources:
+
+# resources for sample provisioning pipeline using Terraform
+
+################################
+
+# config for awscli
+  - name: provision_aws_terraform_cli
+    type: cliConfig
+    integration: dr-aws # replace with your AWS integration name
+    pointer:
+      region: us-east-1
+    flags:
+      - provision-aws-terraform
+
+# GitHub repo holding Terraform scripts to be used in pipeline
+  - name: provision_aws_terraform_repo
+    type: gitRepo
+    integration: dr-github # replace with your GitHub integration name
+    pointer:
+      sourceName: devops-recipes/provision-aws-terraform
+      branch: master
+    flags:
+      - provision-aws-terraform
+
 jobs:
 
 # jobs for the sample node app pipeline from CI thru TEST environment
@@ -14,19 +39,19 @@ jobs:
         # Restore previous Terraform statefile
         - script: |
             cd /build/previousState
-            if [[ -f terraform.tfstate ]]; then 
+            if [[ -f terraform.tfstate ]]; then
               cp terraform.tfstate $PROVISION_AWS_TERRAFORM_REPO_STATE
             fi
         # Export AWS env variables for use by Terraform CLI
         - script: >
-            export 
-            AWS_ACCESS_KEY_ID=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_ACCESS_KEY_ID 
+            export
+            AWS_ACCESS_KEY_ID=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_SECRET_ACCESS_KEY
             AWS_DEFAULT_REGION=$PROVISION_AWS_TERRAFORM_CLI_POINTER_REGION
         - script: |
             cd $PROVISION_AWS_TERRAFORM_REPO_STATE
             terraform apply
-    on_success: 
+    on_success:
       - script: echo "SUCCESS"
     on_failure:
       - script: echo "FAILURE"
@@ -54,20 +79,19 @@ jobs:
             cp terraform.tfstate $PROVISION_AWS_TERRAFORM_REPO_STATE
         # Export AWS env variables for use by Terraform CLI
         - script: >
-            export 
-            AWS_ACCESS_KEY_ID=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_ACCESS_KEY_ID 
+            export
+            AWS_ACCESS_KEY_ID=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY=$PROVISION_AWS_TERRAFORM_CLI_INTEGRATION_AWS_SECRET_ACCESS_KEY
             AWS_DEFAULT_REGION=$PROVISION_AWS_TERRAFORM_CLI_POINTER_REGION
         - script: |
             cd $PROVISION_AWS_TERRAFORM_REPO_STATE
             terraform destroy -force
-    on_success: 
+    on_success:
       - script: echo "SUCCESS"
     on_failure:
       - script: echo "FAILURE"
     # save Terraform statefile for use in subsequent jobs
     always:
-      - script: cp $PROVISION_AWS_TERRAFORM_REPO_STATE/terraform.tfstate /build/state 
+      - script: cp $PROVISION_AWS_TERRAFORM_REPO_STATE/terraform.tfstate /build/state
     flags:
       - provision-aws-terraform
-
